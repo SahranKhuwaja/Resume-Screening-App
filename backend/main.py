@@ -6,6 +6,7 @@ import fitz
 from io import BytesIO
 from pydantic import BaseModel
 from typing import Optional
+import re
 
 app = FastAPI()
 tfidf_vectorizer = joblib.load('./model/tfidf_vectorizer.pkl')
@@ -37,17 +38,20 @@ def testing():
 @app.post('/predict')
 async def predict(file : UploadFile = File(...)):
     data: Data = await get_data_from_file_type(file)
+  
     if not data.success:
         return {
             "error": data.error
         }
     
-    
-    
+    preprocessed_data = preprocess(data.text)
+    tdifd_vectors = tfidf_vectorizer.transform([preprocessed_data])
+    prediction = model.predict(tdifd_vectors)[0]
     return {
         "filename": file.filename,
         "content_type": file.content_type,
         "success": True,
+        "prediction": int(prediction)
     }
 
 def extract_text_from_pdf(file_bytes):
@@ -74,3 +78,13 @@ async def get_data_from_file_type(file) -> Data:
         return Data(text="",error="File type not supported", success=False)
     
     return Data(text=raw_text, success=True)
+
+# Removing all special characters and all while preserving any urls and emails
+pattern = re.compile(r'(https?://[^\s]+|www\.[^\s]+|[\w\.-]+@[\w\.-]+\.\w+)|[^\w\s]')
+
+def preprocess(text):
+    data = text.lower()
+    data = pattern.sub(lambda m: m.group(1) if m.group(1) else ' ', data)
+    data = re.sub(r'\s+', ' ', data).strip().replace('_',' ')
+    data = re.sub(r'(?<=[\w/])([.,;\'")]+)(\s|$)', r'\2', data)
+    return data
