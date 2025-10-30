@@ -9,8 +9,9 @@ from typing import Optional
 import re
 
 app = FastAPI()
-tfidf_vectorizer = joblib.load('./model/tfidf_vectorizer.pkl')
 model = joblib.load('./model/model.pkl')
+tfidf_vectorizer = joblib.load('./model/tfidf_vectorizer.pkl')
+label_encoder = joblib.load('./model/label_encoder.pkl')
 
 origins = [
     "http://localhost:3000",  
@@ -47,12 +48,18 @@ async def predict(file : UploadFile = File(...)):
     preprocessed_data = preprocess(data.text)
     tdifd_vectors = tfidf_vectorizer.transform([preprocessed_data])
     prediction = model.predict(tdifd_vectors)[0]
+    prediction_label = label_encoder.inverse_transform([prediction])[0]
     return {
         "filename": file.filename,
         "content_type": file.content_type,
         "success": True,
-        "prediction": int(prediction)
+        "prediction": int(prediction),
+        "prediction_label": str(prediction_label)
     }
+
+@app.get("/labels")
+def get_labels():
+    return label_encoder.classes_.tolist()
 
 def extract_text_from_pdf(file_bytes):
     text = ""
