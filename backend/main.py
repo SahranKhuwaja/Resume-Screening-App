@@ -1,17 +1,9 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import joblib
-from docx import Document
-import fitz
-from io import BytesIO
-from pydantic import BaseModel
-from typing import Optional
-import re
+from routers import predict_router
 
 app = FastAPI()
-model = joblib.load('./model/model.pkl')
-tfidf_vectorizer = joblib.load('./model/tfidf_vectorizer.pkl')
-label_encoder = joblib.load('./model/label_encoder.pkl')
+
 
 origins = [
     "http://localhost:3000",  
@@ -26,72 +18,9 @@ app.add_middleware(
     allow_headers=["*"],        
 )
 
-class Data(BaseModel):
-    text: str
-    success: bool
-    error: Optional[str] = None
 
 @app.get('/')
 def testing():
-    return {"Hello": "World"}
+    return {"Greeting": "Welcome to Resume Screening App"}
 
-
-@app.post('/predict')
-async def predict(file : UploadFile = File(...)):
-    data: Data = await get_data_from_file_type(file)
-  
-    if not data.success:
-        return {
-            "error": data.error
-        }
-    
-    preprocessed_data = preprocess(data.text)
-    tdifd_vectors = tfidf_vectorizer.transform([preprocessed_data])
-    prediction = model.predict(tdifd_vectors)[0]
-    prediction_label = label_encoder.inverse_transform([prediction])[0]
-    return {
-        "filename": file.filename,
-        "content_type": file.content_type,
-        "success": True,
-        "prediction": int(prediction),
-        "prediction_label": str(prediction_label)
-    }
-
-@app.get("/labels")
-def get_labels():
-    return label_encoder.classes_.tolist()
-
-def extract_text_from_pdf(file_bytes):
-    text = ""
-    with fitz.open(stream=file_bytes, filetype="pdf") as pdf:
-        for page in pdf:
-            text += page.get_text()
-    return text
-
-def extract_text_from_doc(file_bytes):
-    doc = Document(BytesIO(file_bytes))
-    return "\n".join([para.text for para in doc.paragraphs])
-
-async def get_data_from_file_type(file) -> Data:
-    file_bytes = await file.read()
-    raw_text = ""
-    if file.filename.endswith('.txt'):
-        raw_text = file_bytes.decode('utf-8', errors="ignore")
-    elif file.filename.endswith('.pdf'):
-        raw_text = extract_text_from_pdf(file_bytes)
-    elif file.filename.endswith('docx'):
-        raw_text = extract_text_from_doc(file_bytes)
-    else:
-        return Data(text="",error="File type not supported", success=False)
-    
-    return Data(text=raw_text, success=True)
-
-# Removing all special characters and all while preserving any urls and emails
-pattern = re.compile(r'(https?://[^\s]+|www\.[^\s]+|[\w\.-]+@[\w\.-]+\.\w+)|[^\w\s]')
-
-def preprocess(text):
-    data = text.lower()
-    data = pattern.sub(lambda m: m.group(1) if m.group(1) else ' ', data)
-    data = re.sub(r'\s+', ' ', data).strip().replace('_',' ')
-    data = re.sub(r'(?<=[\w/])([.,;\'")]+)(\s|$)', r'\2', data)
-    return data
+app.include_router(predict_router.router)
