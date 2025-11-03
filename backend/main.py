@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import predict_router
+from routers import predict_router, match_router
 
 app = FastAPI()
 
@@ -24,3 +24,4 @@ def testing():
     return {"Greeting": "Welcome to Resume Screening App"}
 
 app.include_router(predict_router.router)
+app.include_router(match_router.router)

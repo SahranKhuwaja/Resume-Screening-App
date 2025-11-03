@@ -11,7 +11,7 @@ ENCODER_PATH = os.path.join(ML_MODEL_DIR, "label_encoder.pkl")
 
 label_encoder = joblib.load(ENCODER_PATH)
 
-router = APIRouter(prefix="/api", tags=["resume_prediction"])
+router = APIRouter(prefix="/api/prediction", tags=["resume_prediction"])
 
 
 @router.post('/predict', response_model=Response)
