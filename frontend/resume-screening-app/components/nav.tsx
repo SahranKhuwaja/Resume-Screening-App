@@ -26,7 +26,7 @@ export default function Navbar() {
             <NavigationMenuLink href="/analyzer" className="font-medium text-gray-300 hover:text-black">
               Resume Analyzer
             </NavigationMenuLink>
-            <NavigationMenuLink href="/" className="font-medium text-gray-300 hover:text-black">
+            <NavigationMenuLink href="/matcher" className="font-medium text-gray-300 hover:text-black">
               Job Match
             </NavigationMenuLink>
           </NavigationMenuList>
