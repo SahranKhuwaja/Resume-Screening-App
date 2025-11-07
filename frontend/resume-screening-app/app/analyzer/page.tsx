@@ -81,7 +81,7 @@ export default function Home() {
   const handleHttpRequest = async (file: File) => {
     const formData = new FormData()
     formData.append("file", file)
-    const response = await axios.post('http://127.0.0.1:8000/api/predict', formData)
+    const response = await axios.post('http://127.0.0.1:8000/api/prediction/predict', formData)
     if (response.data.success) {
       setTimeout(() => {
         setProcesing(false)

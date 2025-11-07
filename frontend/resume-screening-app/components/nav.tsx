@@ -23,11 +23,11 @@ export default function Navbar() {
             <NavigationMenuLink href="/" className="font-medium text-gray-300 hover:text-black">
               Home
             </NavigationMenuLink>
+              <NavigationMenuLink href="/ranker" className="font-medium text-gray-300 hover:text-black">
+              Resume Ranker
+            </NavigationMenuLink>
             <NavigationMenuLink href="/analyzer" className="font-medium text-gray-300 hover:text-black">
               Resume Analyzer
-            </NavigationMenuLink>
-            <NavigationMenuLink href="/matcher" className="font-medium text-gray-300 hover:text-black">
-              Job Match
             </NavigationMenuLink>
           </NavigationMenuList>
         </NavigationMenu>

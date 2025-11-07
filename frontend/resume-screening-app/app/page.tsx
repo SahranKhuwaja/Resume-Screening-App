@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter()
 
   const handleClick = ()=>{
-    router.push('/analyzer')
+    router.push('/ranker')
   }
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-zinc-50 font-sans">

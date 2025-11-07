@@ -22,9 +22,10 @@ async def calculate_similarity(job_description : str = Form(...), files : list[U
         preprocessed_data = preprocess(data.text)
         resume_embedding = convert_to_embeddings(preprocessed_data)
         similarity_score = calculate_sentence_similarity_SBERT(job_description_embedding, resume_embedding)
+        normalized_similarity_score = normalize_and_compress_similarity_score(similarity_score) 
         resumes.append(Similarity(file_name=file.filename, 
                                     content_type=file.content_type, 
-                                    similarity_score=similarity_score))
+                                    similarity_score=normalized_similarity_score))
         
         resumes = sorted(resumes, key=lambda x: x.similarity_score, reverse=True)
     return SimilarityResponse(success=True,
@@ -37,3 +38,6 @@ def convert_to_embeddings(text : str):
 
 def calculate_sentence_similarity_SBERT(job_description, resume):
     return util.cos_sim(job_description, resume).item() 
+
+def normalize_and_compress_similarity_score(score : float):
+    return 0.9 * score + 0.1

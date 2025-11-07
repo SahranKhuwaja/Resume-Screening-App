@@ -15,9 +15,6 @@ import {
 } from "@/components/ui/empty"
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Medal, Trophy, Award, FileText } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -44,11 +41,12 @@ export default function Home() {
     setFiles(selectedFiles);
   }
 
-  useEffect(()=>{
-    if(jobDescription!=="" && files.length > 0){
-       handleHttpRequest()
+  useEffect(() => {
+    if (jobDescription !== "" && files.length > 0) {
+      setProcesing(true)
+      handleHttpRequest()
     }
-  },[jobDescription, files])
+  }, [jobDescription, files])
 
   const showLoading = () => {
     if (isProcessing) {
@@ -76,6 +74,7 @@ export default function Home() {
     });
     const response = await axios.post('http://127.0.0.1:8000/api/match/similarity', formData)
     if (response.data.success) {
+      console.log(response.data.resumes)
       setTimeout(() => {
         setProcesing(false)
         setResumes(response.data.resumes)
@@ -170,10 +169,18 @@ export default function Home() {
       </div>
     )
   }
-
+  const resumeTableHeader = () => {
+    return (<div className="space-y-2 mt-5">
+      <h1 className="text-3xl font-bold tracking-tight text-balance">Resume Rankings</h1>
+      <p className="text-muted-foreground text-balance">
+        Top candidates ranked by similarity score to job requirements
+      </p>
+    </div>
+    );
+  }
   const resumeRankingTable = () => {
     return (
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden m-20 mt-5">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -187,22 +194,22 @@ export default function Home() {
             <TableBody>
               {resumes.map((resume: any, i: number) => {
                 const scorePercentage = Math.round(resume.similarity_score * 100)
-                const icon = getRankIcon(resume.rank)
+                const icon = getRankIcon(i + 1)
 
                 return (
-                  <TableRow key={resume.rank} className="group hover:bg-muted/50 transition-colors">
+                  <TableRow key={i + 1} className="group hover:bg-muted/50 transition-colors">
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {icon ? (
                           <div className="flex items-center gap-2">
                             {icon}
                             <Badge variant={getRankBadgeVariant(i + 1)} className="font-semibold">
-                              #{resume.rank}
+                              #{i + 1}
                             </Badge>
                           </div>
                         ) : (
                           <Badge variant="outline" className="font-medium">
-                            #{resume.rank}
+                            #{i + 1}
                           </Badge>
                         )}
                       </div>
@@ -240,7 +247,10 @@ export default function Home() {
       </h2>
       <div className="grid gap-3 ml-15 mb-5 mt-5 mr-15">
         <Label htmlFor="message">Job Description</Label>
-        <Textarea placeholder="Enter job description here" id="message" onChange={e => setJobDescription(e.target.value)} />
+        <Textarea className="overflow-auto h-50"
+          placeholder="Enter job description here"
+          id="message"
+          onChange={e => setJobDescription(e.target.value)} />
       </div>
       <Button variant="outline" size="lg" onClick={upload}>
         Upload Multiple Resumes<IconUpload />
@@ -252,7 +262,7 @@ export default function Home() {
         onChange={onFileChange}
         multiple={true} />
       {showLoading()}
-      {resumes.length > 0 && resumeRankingTable()}
+      {resumes.length > 0 && [resumeTableHeader(), resumeRankingTable()]}
     </div>
 
   );
