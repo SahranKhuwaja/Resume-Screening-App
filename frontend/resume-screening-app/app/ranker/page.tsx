@@ -70,7 +70,6 @@ export default function Home() {
     });
     const response = await axios.post('http://127.0.0.1:8000/api/match/similarity', formData)
     if (response.data.success) {
-      console.log(response.data.resumes)
       setTimeout(() => {
         setProcesing(false)
         setResumes(response.data.resumes)

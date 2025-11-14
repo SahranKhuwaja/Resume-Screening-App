@@ -25,21 +25,7 @@ import { Medal, Trophy, Award, FileText } from "lucide-react"
     if (rank <= 3) return "default"
     return "secondary"
   }
-
-  const getScoreColor = (score: number) => {
-    if (score >= 0.9) return "text-emerald-600 dark:text-emerald-400"
-    if (score >= 0.8) return "text-blue-600 dark:text-blue-400"
-    if (score >= 0.7) return "text-amber-600 dark:text-amber-400"
-    return "text-muted-foreground"
-  }
-
-  const getProgressColor = (score: number) => {
-    if (score >= 0.9) return "bg-emerald-500"
-    if (score >= 0.8) return "bg-blue-500"
-    if (score >= 0.7) return "bg-amber-500"
-    return "bg-muted"
-  }
-
+  
   const CircularProgress = ({ score }: { score: number }) => {
     const percentage = score * 100
     const radius = 24
@@ -47,17 +33,19 @@ import { Medal, Trophy, Award, FileText } from "lucide-react"
     const strokeDashoffset = circumference - (percentage / 100) * circumference
 
     const getStrokeColor = (score: number) => {
-      if (score >= 0.9) return "#10b981" // emerald-500
-      if (score >= 0.8) return "#3b82f6" // blue-500
-      if (score >= 0.7) return "#f59e0b" // amber-500
-      return "#9ca3af" // gray-400
+      if (score >= 0.9) return "#0000FF" 
+      if (score >= 0.8) return "#228B22" 
+      if (score >= 0.7) return "#FFA500" 
+      if(score >= 0.6) return "#FFFF00"
+      return "#FF0000"
     }
 
     const getTextColor = (score: number) => {
-      if (score >= 0.9) return "text-emerald-600 dark:text-emerald-400"
-      if (score >= 0.8) return "text-blue-600 dark:text-blue-400"
-      if (score >= 0.7) return "text-amber-600 dark:text-amber-400"
-      return "text-muted-foreground"
+      if (score >= 0.9) return "text-blue-600 dark:text-blue-400"
+      if (score >= 0.8) return "text-green-800 dark:text-green-600"
+      if (score >= 0.7) return "text-orange-600 dark:text-orange-400"
+      if(score >= 0.6) return "text-yellow-400 dark:text-yellow-300"
+      return "text-red-800 dark:text-red-600"
     }
 
     return (
