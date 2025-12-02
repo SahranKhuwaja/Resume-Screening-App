@@ -111,4 +111,4 @@ Generate whole resumes based on job description for ATS.
 👨‍💻 Author
 
 Sahran Khuwaja
-🚀 AI & Robotics Enthusiast | Full-Stack Developer | Data Scientist
+🚀 Maching Learning Engineer | AI & Robotics Enthusiast | Full-Stack Developer | Data Scientist
