@@ -1,5 +1,7 @@
 🧠 Resume Screening & Ranking App
 
+**DEMO:** https://drive.google.com/file/d/1J8eBqMfjDRqCCaN9NsQsS-TRaWnkaUsZ/view
+
 An intelligent NLP-powered Resume Screening and Ranking system built using FastAPI (backend) and Next.js (frontend).
 This project automates resume classification and ranking for recruiters, helping them identify top candidates efficiently using machine learning, semantic embeddings, and cosine similarity.
 
